@@ -12,9 +12,9 @@ my $builder = Module::Build->new(
         'Test::More' => 0,
     },
     requires => {
-        'perl' => 5.10,
+        'perl' => '5.10.0',
         'DBI'  => 1.601,
-        'YAML' => 0.80,
+        'YAML' => '0.80',
     },
     add_to_cleanup      => [ 'DBIx-DataStore-*' ],
     create_makefile_pl => 'traditional',
