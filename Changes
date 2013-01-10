@@ -1,5 +1,7 @@
 Revision history for DBIx-DataStore
 
-0.01    Date/time
-        First version, released on an unsuspecting world.
+0.099001    2013-01-09
+            Initial draft of the cleanup/rewrite of a module Buddy Burden
+            and I have been carrying around with us to various jobs for
+            over the past decade.
 
