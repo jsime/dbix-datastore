@@ -13,7 +13,7 @@ my $builder = Module::Build->new(
     },
     requires => {
         'perl' => '5.10.0',
-        'DBI'  => 1.601,
+        'DBI'  => '1.601',
         'YAML' => '0.80',
     },
     add_to_cleanup      => [ 'DBIx-DataStore-*' ],
