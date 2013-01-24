@@ -119,6 +119,7 @@ sub normalize_config {
             foreach my $opt (@server_opts) {
                 $config{$server}{'primary'}{$opt} = $orig->{$server}{'primary'}{$opt}
                     if exists $orig->{$server}{'primary'}{$opt};
+            }
         }
 
         # default schema search paths used, for those databases which have schemas
