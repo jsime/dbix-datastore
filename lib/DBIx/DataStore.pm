@@ -224,12 +224,12 @@ specify in it one or two of the following:
 
 =over 4
 
-=item page
+=item * page
 
 The (1-indexed, not 0) page of results to return with the result set
 object. (Default: 1)
 
-=item per_page
+=item * per_page
 
 How many rows to return per page. (Default: 25)
 
@@ -270,6 +270,17 @@ reader databases).
 
 =head3 Other Options
 
+=over 4
+
+=item * name
+
+For logging purposes, you can pass in an arbitrary string (whitespace
+will be condensed, newlines and such removed) that will be included
+in all logging output related to the query. If you don't provide a
+query name, a random one will be generated.
+
+=back
+
 =cut
 
 sub do {
@@ -295,7 +306,11 @@ automatically be notified of progress on your bug as I make changes.
 
 =head1 TODO
 
+=over 4
+
 =item * Named placeholders
+
+=back
 
 =head1 SUPPORT
 
