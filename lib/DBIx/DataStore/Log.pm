@@ -31,15 +31,16 @@ sub new {
 sub level {
     my ($self, $level) = @_;
 
-    return unless defined $level;
-    return unless $self->level(uc($level));
+    if (defined $level) {
+        return unless $self->severity(uc($level));
 
-    $self->{'level'} = uc($level);
+        $self->{'level'} = uc($level);
+    }
 
-    return $self->level;
+    return $self->{'level'};
 }
 
-sub level_num {
+sub severity {
     my ($self, $level) = @_;
 
     if (defined $level) {
@@ -54,11 +55,11 @@ sub log {
     my $self = shift;
     my $level = uc(shift) || 'ERROR';
 
-    die "Invalid logging level specified: $level" unless $self->level_num($level);
+    die "Invalid logging level specified: $level" unless $self->severity($level);
 
     # Short circuit if the incoming message is a higher logging level than
     # what we're currently set to log.
-    return if $self->level_num($level) > $self->level_num;
+    return if $self->severity($level) > $self->severity;
 
     my @messages = @_;
 
