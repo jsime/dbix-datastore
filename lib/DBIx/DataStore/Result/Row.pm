@@ -1,5 +1,6 @@
 package DBIx::DataStore::Result::Row::impl;
 
+use 5.010;
 use strict;
 use warnings;
 
