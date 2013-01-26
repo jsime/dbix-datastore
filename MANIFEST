@@ -1,7 +1,7 @@
 Build.PL
 Changes
 lib/DBIx/DataStore.pm
-MANIFEST			This list of files
+MANIFEST
 README
 t/00-load.t
 t/manifest.t
