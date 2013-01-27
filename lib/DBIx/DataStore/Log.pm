@@ -214,7 +214,7 @@ sub log {
 
         my $i = 0;
         while (my @stack = caller($i)) {
-            push(@messages, sprintf('  {%d} %s,%d  %s::%s', $i, @stack[1,2,0,3]);
+            push(@messages, sprintf('  {%d} %s,%d  %s::%s', $i, @stack[1,2,0,3]));
         }
     }
 
