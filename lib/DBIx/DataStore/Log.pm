@@ -5,6 +5,7 @@ use strict;
 use warnings;
 
 use Data::Dumper;
+use Time::HiRes;
 
 =head1 NAME
 
@@ -92,7 +93,6 @@ sub new {
         level       => 'CRITICAL',
         level_order => [qw( CRITICAL ERROR WARN INFO DEBUG )],
         levels      => {},
-        format      => '[TS] [PID] [LEVEL] [DATASTORE] [NAME] MSG',
     };
 
     for (0..$#{$self->{'level_order'}}) {
@@ -161,10 +161,13 @@ sub severity {
     return $self->{'levels'}{$self->{'level'}};
 }
 
-=head2 log ( $level, @messages )
+=head2 log ( [$sth,] $level, @messages )
 
 Accepts: Minimum two arguments: first a scalar of the named logging level, second
 (and any after that) the log messages to be printed to the configured destination.
+An optional DBIx::DataStore::Result::Set object may also be passed in as the very
+first argument. This is required if you hope to have any chance of getting the
+SQL query and bind variables into the logging output.
 
 Returns: In the case of severity==0 messages, DBIx::DataStore will call die() and
 thus not return anything. All other levels will result in a true value being
@@ -192,25 +195,52 @@ sub log {
     my @messages = grep { defined $_ && $_ =~ m{\w}o } @_;
     return unless scalar(@messages) > 0 || $self->trace;
 
+    my $ds_name = $self->datastore->name;
+    my $query_name = defined $sth ? $sth->name : random_query_name();
+
     if ($self->show_sql && defined $sth) {
-        push(@messages, 'SQL Query:', split(/\n/o, $sth->sql));
+        push(@messages, 'SQL QUERY', '='x72, split(/\n/o, $sth->sql));
 
         if ($self->show_vars) {
             my $dumper = Data::Dumper->new([$sth->binds]);
             $dumper->Terse(1)->Indent(0)->Pad(' ');
 
-            push(@messages, 'Bind Variables:', $dumper->Dump);
+            push(@messages, 'BIND VARIABLES', '='x72, $dumper->Dump);
         }
     }
 
     if ($self->trace) {
-        push(@messages, 'Stack Trace:');
+        push(@messages, 'STACK TRACE', '='x72);
 
         my $i = 0;
         while (my @stack = caller($i)) {
             push(@messages, sprintf('  {%d} %s,%d  %s::%s', $i, @stack[1,2,0,3]);
         }
     }
+
+    my $timestamp = scalar(localtime);
+
+    @messages = map {
+            sprintf('[%s] [%d] [%s] [%s] [%s] %s',
+                $timestamp, $$, uc($level), $ds_name, $query_name, $_
+            )
+        } @messages;
+
+    print STDERR join("\n", @messages);
+
+    # TODO make this more useful.
+    die "See log for details." if $self->severity == 0;
+    return 1;
+}
+
+=head2 random_query_name ()
+
+=cut
+
+sub random_query_name {
+    my $name = 'DS' . time();
+
+    return $name;
 }
 
 =head2 show_sql ( $boolean )
