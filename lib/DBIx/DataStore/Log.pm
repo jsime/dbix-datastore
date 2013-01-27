@@ -4,6 +4,8 @@ use 5.010;
 use strict;
 use warnings;
 
+use Data::Dumper;
+
 =head1 NAME
 
 DBIx::DataStore::Log
@@ -185,13 +187,19 @@ sub log {
     # what we're currently set to log.
     return if $self->severity($level) > $self->severity;
 
+    # We'll only produce logging output if there was a message to log, or stack
+    # trace output has been requested.
     my @messages = grep { defined $_ && $_ =~ m{\w}o } @_;
-    return unless scalar(@messages) > 0;
+    return unless scalar(@messages) > 0 || $self->trace;
 
     if ($self->show_sql && defined $sth) {
+        push(@messages, 'SQL Query:', split(/\n/o, $sth->sql));
 
         if ($self->show_vars) {
+            my $dumper = Data::Dumper->new([$sth->binds]);
+            $dumper->Terse(1)->Indent(0)->Pad(' ');
 
+            push(@messages, 'Bind Variables:', $dumper->Dump);
         }
     }
 
