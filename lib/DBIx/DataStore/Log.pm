@@ -49,8 +49,8 @@ Default: 0
 
 Include stack traces in logging output. This will greatly increase the
 amount of logging output you see, particularly if you set your logging
-level broadly ({trace => 1, level => 'DEBUG', show_sql => 1} can be a
-great way to fill up your log disks quickly).
+level broadly ({trace=>1, level=>'DEBUG', show_sql=>1, show_vars=>1} can
+be a great way to fill up your log disks quickly).
 
 =item * show_sql
 
@@ -176,6 +176,7 @@ will be printed on a separate line.
 
 sub log {
     my $self = shift;
+    my $sth = shift if ref($_[0]) eq 'DBIx::DataStore::Result::Set';
     my $level = uc(shift) || 'ERROR';
 
     die "Invalid logging level specified: $level" unless $self->severity($level);
@@ -184,9 +185,54 @@ sub log {
     # what we're currently set to log.
     return if $self->severity($level) > $self->severity;
 
-    my @messages = @_;
+    my @messages = grep { defined $_ && $_ =~ m{\w}o } @_;
+    return unless scalar(@messages) > 0;
 
-    my @callstack = caller();
+    if ($self->show_sql && defined $sth) {
+
+        if ($self->show_vars) {
+
+        }
+    }
+
+    if ($self->trace) {
+        push(@messages, 'Stack Trace:');
+
+        my $i = 0;
+        while (my @stack = caller($i)) {
+            push(@messages, sprintf('  {%d} %s,%d  %s::%s', $i, @stack[1,2,0,3]);
+        }
+    }
+}
+
+=head2 show_sql ( $boolean )
+
+Accepts: Optional boolean to change show_sql option.
+
+Returns: Current show_sql setting (1 or 0).
+
+=cut
+
+sub show_sql {
+    my ($self, $value) = @_;
+
+    $self->{'show_sql'} = $value if defined $value && ($value == 0 || $value == 1);
+    return $self->{'show_sql'};
+}
+
+=head2 show_vars ( $boolean )
+
+Accepts: Optional boolean to change show_vars option.
+
+Returns: Current show_vars setting (1 or 0).
+
+=cut
+
+sub show_vars {
+    my ($self, $value) = @_;
+
+    $self->{'show_vars'} = $value if defined $value && ($value == 0 || $value == 1);
+    return $self->{'show_vars'};
 }
 
 =head2 trace ( $boolean )
@@ -205,7 +251,6 @@ sub trace {
     my ($self, $value) = @_;
 
     $self->{'trace'} = $value if defined $value && ($value == 0 || $value == 1);
-
     return $self->{'trace'};
 }
 
