@@ -54,9 +54,9 @@ use constant VALUES => DBIx::DataStore::Result::Row::impl::VALUES;
 use constant ITER   => DBIx::DataStore::Result::Row::impl::ITER;
 
 use overload (
-    '%{}'   => sub { ${$_[0]}->{'hash'} },
-    '@{}'   => sub { ${$_[0]}->{'impl'}->[VALUES] },
-    '""'    => sub { 'Result::Row:' . (@{$_[0]} ? join('||', @{$_[0]}) : '') },
+    '%{}' => sub { ${$_[0]}->{'hash'} },
+    '@{}' => sub { ${$_[0]}->{'impl'}->[VALUES] },
+    '""'  => sub { 'Result::Row:' . (@{$_[0]} ? join('||', @{$_[0]}) : '') },
 );
 
 our $AUTOLOAD;
@@ -100,12 +100,6 @@ sub hashref {
     my ($self) = @_;
 
     return { map { $_ => $$self->{'hash'}->{$_} } @{ $$self->{'impl'}->[KEYS] } };
-}
-
-sub num_cols {
-    my ($self) = @_;
-
-    return scalar @{ $$self->{'impl'}->[VALUES] };
 }
 
 1;
