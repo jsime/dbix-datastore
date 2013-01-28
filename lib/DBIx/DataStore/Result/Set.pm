@@ -25,9 +25,7 @@ sub all {
         my $fields = [ @{ $$self->{'_sth'}->{'NAME'} } ];
         my $index = { %{ $$self->{'_sth'}->{'NAME_hash'} } };
 
-        foreach (@$data) {
-            $_ = DBIx::DataStore::Result::Row->new($fields, $index, $_);
-        }
+        $_ = DBIx::DataStore::Result::Row->new($fields, $index, $_) for @{$data};
     }
 
     return $data;
@@ -40,8 +38,7 @@ sub error {
 sub next {
     my ($self) = @_;
 
-    if (my $row = $$self->{'_sth'}->fetchrow_arrayref)
-    {
+    if (my $row = $$self->{'_sth'}->fetchrow_arrayref) {
         $$self->{'impl'}->[DBIx::DataStore::Result::Row::VALUES()] = $row;
         return $self;
     }
