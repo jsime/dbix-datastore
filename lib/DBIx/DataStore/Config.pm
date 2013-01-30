@@ -8,7 +8,7 @@ use File::HomeDir;
 use File::Spec;
 use Memoize;
 use Storable qw( freeze thaw );
-use YAML;
+use YAML qw( LoadFile );
 
 =head1 NAME
 
@@ -40,7 +40,7 @@ sub new {
 
     $self = bless $self, $class;
 
-    $self->{'_raw_config'} = $opts{'config'} && ref($opts{'config'}) eq 'HASH'
+    $self->{'raw_config'} = $opts{'config'} && ref($opts{'config'}) eq 'HASH'
         ? normalize_config($opts{'config'})
         : normalize_config(read_config(find_config_file()));
 
@@ -220,12 +220,12 @@ sub pick_datastore {
 
 sub read_config {
     my ($path) = @_;
-}
 
-sub validate_config {
-    my ($config) = @_;
+    return unless defined $path && -f $path && -r _;
+    my $yaml = LoadFile($path);
 
-    return 1;
+    return unless defined $yaml && ref($yaml) eq 'HASH';
+    return $yaml;
 }
 
 sub _truthiness {
