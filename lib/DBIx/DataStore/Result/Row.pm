@@ -14,14 +14,14 @@ sub TIEHASH {
 }
 
 sub FETCH {
-    return exists $_[0]->[INDEX]->{$_[1]}
-        ? $_[0]->[VALUES]->[ $_[0]->[INDEX]->{$_[1]} ]
+    return exists $_[0][INDEX]{$_[1]}
+        ? $_[0][VALUES][ $_[0][INDEX]{$_[1]} ]
         : die dslog("Invalid column name specified: $_[1]");
 }
 
 sub STORE {
-    exists $_[0]->[INDEX]->{$_[1]}
-        ? ($_[0]->[VALUES]->[ $_[0]->[INDEX]->{$_[1]} ] = $_[2])
+    exists $_[0][INDEX]{$_[1]}
+        ? ($_[0][VALUES][ $_[0][INDEX]{$_[1]} ] = $_[2])
         : die dslog("Cannot store to invalid column name: $_[1]");
 }
 
@@ -30,16 +30,16 @@ sub DELETE {
 }
 
 sub EXISTS {
-    return exists $_[0]->[INDEX]->{$_[1]};
+    return exists $_[0][INDEX]{$_[1]};
 }
 
 sub FIRSTKEY {
-    $_[0]->[ITER] = 0;
+    $_[0][ITER] = 0;
     NEXTKEY($_[0]);
 }
 
 sub NEXTKEY {
-    return $_[0]->[KEYS]->[ $_[0]->[ITER]++ ] if $_[0]->[ITER] < @{ $_[0]->[KEYS] };
+    return $_[0][KEYS][ $_[0][ITER]++ ] if $_[0][ITER] < @{ $_[0][KEYS] };
     return undef;
 }
 
@@ -54,9 +54,9 @@ use constant VALUES => DBIx::DataStore::Result::Row::impl::VALUES;
 use constant ITER   => DBIx::DataStore::Result::Row::impl::ITER;
 
 use overload (
-    '%{}' => sub { ${$_[0]}->{'hash'} },
-    '@{}' => sub { ${$_[0]}->{'impl'}->[VALUES] },
-    '""'  => sub { 'Result::Row:' . (@{$_[0]} ? join('||', @{$_[0]}) : '') },
+    '%{}' => sub { $_[0]{'hash'} },
+    '@{}' => sub { $_[0]{'impl'}[VALUES] },
+    '""'  => sub { 'Result::Row: ' . (@{$_[0]} ? join('||', @{$_[0]}) : '') },
 );
 
 our $AUTOLOAD;
@@ -67,8 +67,8 @@ sub AUTOLOAD {
     my ($self) = @_;
 
     if (ref($self) eq 'DBIx::DataStore::Result::Row' || ref($self) eq 'DBIx::DataStore::Result::Set') {
-        return exists $$self->{'hash'}->{$method}
-            ? $$self->{'hash'}->{$method}
+        return exists $self->{'hash'}->{$method}
+            ? $self->{'hash'}->{$method}
             : die dslog("No such method (or column): $method");
     } else {
         die dslog("No such class method: $method");
@@ -76,12 +76,13 @@ sub AUTOLOAD {
 }
 
 sub new {
-    my $self = \{};
+    my $class = shift;
+    my $self = {};
     my %tied_hash;
-    $$self->{'impl'} = tie %tied_hash, $_[0] . '::impl', $_[1], $_[2], $_[3];
-    $$self->{'hash'} = \%tied_hash;
+    $self->{'impl'} = tie %tied_hash, $_[0] . '::impl', $_[1], $_[2], $_[3];
+    $self->{'hash'} = \%tied_hash;
 
-    return bless($self, $_[0]);
+    return bless($self, $class);
 }
 
 sub col {
@@ -93,13 +94,13 @@ sub col {
 sub columns {
     my ($self) = @_;
 
-    return @{ $$self->{'impl'}->[KEYS] };
+    return @{ $self->{'impl'}->[KEYS] };
 }
 
 sub hashref {
     my ($self) = @_;
 
-    return { map { $_ => $$self->{'hash'}->{$_} } @{ $$self->{'impl'}->[KEYS] } };
+    return { map { $_ => $self->{'hash'}->{$_} } @{ $self->{'impl'}->[KEYS] } };
 }
 
 1;
