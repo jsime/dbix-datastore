@@ -235,6 +235,14 @@ sub log {
 
 =head2 random_query_name ()
 
+Accepts: Nothing.
+
+Returns: String containing query name.
+
+Provides a randomly-generated name for logging purposes when the caller has not
+provided a name for the query themselves.  Allows multiple log lines to be
+easily identified as related.
+
 =cut
 
 sub random_query_name {
