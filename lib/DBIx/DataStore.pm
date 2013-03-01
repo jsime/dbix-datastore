@@ -146,11 +146,16 @@ the YAML configuration. The first match will be used.
 =cut
 
 sub new {
-    my ($class, $store) = @_;
+    my $class = shift;
 
-    my $self = {};
+    my $store = defined $_[0] && ref($_[0]) ne 'HASH' ? shift : 'default';
+    my $config = shift if defined $_[0] && ref($_[0]) eq 'HASH';
 
-    return bless $self, $class;
+    my $self = bless {}, $class;
+
+    $self->{'config'} = DBIx::DataStore::Config->new( store => $store, config => $config );
+
+    return $self;
 }
 
 =head2 do
