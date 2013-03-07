@@ -155,6 +155,14 @@ sub new {
 
     $self->{'config'} = DBIx::DataStore::Config->new( store => $store, config => $config );
 
+    my %log_opts;
+
+    foreach my $opt ($self->config->options) {
+        $log_opts{$1} = $self->config->option($opt) if $opt =~ m{^log_(.*)}o;
+    }
+
+    $self->{'logger'} = DBIx::DataStore::Log->new(%log_opts);
+
     return $self;
 }
 
