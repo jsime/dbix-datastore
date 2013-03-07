@@ -49,7 +49,25 @@ sub new {
     return $self;
 }
 
+sub dsn {
+    my ($self, $server) = @_;
 
+    $server = 'primary' unless defined $server;
+
+    # TODO gather and return dsn for specified server
+}
+
+sub options {
+    my ($self) = @_;
+
+    # TODO return list of configuration options set for selected datastore (does not include names of servers or DSN information)
+}
+
+sub option {
+    my ($self, $name, $value) = @_;
+
+    # TODO getter/setter for individual datastore option
+}
 
 # Internal Subs
 
