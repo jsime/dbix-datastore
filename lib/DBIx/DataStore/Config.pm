@@ -31,7 +31,7 @@ See http://dev.perl.org/licenses/ for more information.
 
 =cut
 
-memoize('_truthiness');
+memoize('truthiness');
 
 sub new {
     my ($class, %opts) = @_;
@@ -48,6 +48,10 @@ sub new {
 
     return $self;
 }
+
+
+
+# Internal Subs
 
 sub find_config_file {
     my $home = File::HomeDir->my_home();
@@ -92,12 +96,12 @@ sub normalize_config {
 
         # global options affecting the datastore
         foreach my $opt (keys %{$config{$server}}) {
-            $config{$server}{$opt} = _truthiness($default{$opt})
-                if exists $default{$opt} && defined _truthiness($default{$opt});
+            $config{$server}{$opt} = truthiness($default{$opt})
+                if exists $default{$opt} && defined truthiness($default{$opt});
 
-            $config{$server}{$opt} = _truthiness($orig->{$server}{$opt})
+            $config{$server}{$opt} = truthiness($orig->{$server}{$opt})
                 if exists $orig->{$server}{$opt}
-                && defined _truthiness($orig->{$server}{$opt});
+                && defined truthiness($orig->{$server}{$opt});
         }
 
         $config{$server}{'default_reader'} =
@@ -228,7 +232,7 @@ sub read_config {
     return $yaml;
 }
 
-sub _truthiness {
+sub truthiness {
     my ($setting) = @_;
 
     return 0 unless defined $setting;
