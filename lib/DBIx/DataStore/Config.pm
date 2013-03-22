@@ -69,6 +69,18 @@ sub option {
     # TODO getter/setter for individual datastore option
 }
 
+sub server {
+    my ($self, $server) = @_;
+
+    $self->{'server'} = $server
+        if  defined $server
+         && $server ne 'default'
+         && exists $self->{'raw_config'}{$server};
+
+    return $self->{'server'} if exists $self->{'server'};
+    return;
+}
+
 # Internal Subs
 
 sub find_config_file {
