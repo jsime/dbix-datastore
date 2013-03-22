@@ -50,11 +50,9 @@ sub new {
 }
 
 sub dsn {
-    my ($self, $server) = @_;
+    my ($self) = @_;
 
-    $server = 'primary' unless defined $server;
-
-    # TODO gather and return dsn for specified server
+    # TODO gather and return dsn for current server
 }
 
 sub options {
