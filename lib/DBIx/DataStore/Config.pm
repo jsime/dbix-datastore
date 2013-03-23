@@ -267,6 +267,8 @@ sub normalize_config {
             }
         }
     }
+
+    return \%config;
 }
 
 sub pick_datastore {
