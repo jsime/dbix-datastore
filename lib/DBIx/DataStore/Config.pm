@@ -44,7 +44,7 @@ sub new {
         ? normalize_config($opts{'config'})
         : normalize_config(read_config(find_config_file()));
 
-    $self->pick_datastore($opts{'store'} ? $opts{'store'} : 'default');
+    $self->server($self->pick_datastore($opts{'store'} ? $opts{'store'} : 'default'));
 
     return $self;
 }
