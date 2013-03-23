@@ -85,9 +85,21 @@ sub options {
 }
 
 sub option {
-    my ($self, $name, $value) = @_;
+    my ($self, $name, $value, $reader) = @_;
 
-    # TODO getter/setter for individual datastore option
+    if (defined $reader) {
+        return unless exists $self->{'config'}{$server}{'readers'}{$reader};
+
+        $self->{'config'}{$server}{'readers'}{$reader}{$name} = $value if defined $value;
+        return $self->{'config'}{$server}{'readers'}{$reader}{$name}
+            if exists $self->{'config'}{$server}{'readers'}{$reader}{$name};
+    } else {
+        $self->{'config'}{$server}{$name} = $value if defined $value;
+        return $self->{'config'}{$server}{$name}
+            if exists $self->{'config'}{$server}{$name};
+    }
+
+    return;
 }
 
 sub server {
