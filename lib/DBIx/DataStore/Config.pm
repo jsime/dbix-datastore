@@ -40,7 +40,7 @@ sub new {
 
     $self = bless $self, $class;
 
-    $self->{'raw_config'} = $opts{'config'} && ref($opts{'config'}) eq 'HASH'
+    $self->{'config'} = $opts{'config'} && ref($opts{'config'}) eq 'HASH'
         ? normalize_config($opts{'config'})
         : normalize_config(read_config(find_config_file()));
 
@@ -50,9 +50,32 @@ sub new {
 }
 
 sub dsn {
-    my ($self) = @_;
+    my ($self, $reader) = @_;
 
-    # TODO gather and return dsn for current server
+    my $server = $self->server;
+    return unless $server;
+
+    my ($driver, @parts);
+
+    if (defined $reader) {
+        return unless exists $self->{'config'}{$server}{'readers'}{$reader};
+
+        $driver = $self->{'config'}{$server}{'readers'}{$reader}{'driver'};
+
+        foreach my $part (qw( database host port )) {
+            push(@parts, sprintf('%s=%s', $part, $self->{'config'}{$server}{'readers'}{$reader}{$part}))
+                if exists $self->{'config'}{$server}{'readers'}{$reader}{$part};
+        }
+    } else {
+        $driver = $self->{'config'}{$server}{'driver'};
+
+        foreach my $part (qw( database host port )) {
+            push(@parts, sprintf('%s=%s', $part, $self->{'config'}{$server}{$part}))
+                if exists $self->{'config'}{$server}{$part};
+        }
+    }
+
+    return sprintf('dbi:%s:%s', $driver, join(';', @parts));
 }
 
 sub options {
