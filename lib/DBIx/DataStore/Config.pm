@@ -55,25 +55,10 @@ sub dsn {
     my $server = $self->server;
     return unless $server;
 
-    my ($driver, @parts);
+    my $driver = $self->option('driver', undef, $reader);
 
-    if (defined $reader) {
-        return unless exists $self->{'config'}{$server}{'readers'}{$reader};
-
-        $driver = $self->{'config'}{$server}{'readers'}{$reader}{'driver'};
-
-        foreach my $part (qw( database host port )) {
-            push(@parts, sprintf('%s=%s', $part, $self->{'config'}{$server}{'readers'}{$reader}{$part}))
-                if exists $self->{'config'}{$server}{'readers'}{$reader}{$part};
-        }
-    } else {
-        $driver = $self->{'config'}{$server}{'driver'};
-
-        foreach my $part (qw( database host port )) {
-            push(@parts, sprintf('%s=%s', $part, $self->{'config'}{$server}{$part}))
-                if exists $self->{'config'}{$server}{$part};
-        }
-    }
+    my @parts;
+    push(@parts, sprintf('%s=%s', $_, $self->option($_, undef, $reader))) for qw( database host port );
 
     return sprintf('dbi:%s:%s', $driver, join(';', @parts));
 }
