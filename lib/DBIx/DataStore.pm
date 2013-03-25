@@ -302,7 +302,22 @@ sub do {
     my $query = shift;
     my @binds = @_;
 
-    
+    # get query type (mostly so we know whether count() and friends return a number
+    # or issue another query for a total of read/readable rows)
+
+    # pick destination, based on reader availability and transaction state, but overridden
+    # by explicit "server" option in $opts
+
+    # placeholder and bind manipulation (to support arrayref, hashref placeholders)
+
+    # limit-offset modification if pagination is requested
+
+    # query preparation (switching between cached or not, depending on configuration
+    # and $opts
+
+    # query execution
+
+    # instantiation and return of ResultSet
 }
 
 =head1 AUTHORS
