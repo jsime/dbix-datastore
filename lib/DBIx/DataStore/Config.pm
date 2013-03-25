@@ -270,6 +270,11 @@ sub normalize_config {
 
 sub pick_datastore {
     my ($self, $name) = @_;
+
+    if (defined $name && $name ne 'default') {
+        return $name if exists $self->{'config'}{$name};
+        return;
+    }
 }
 
 sub read_config {
