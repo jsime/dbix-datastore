@@ -72,6 +72,8 @@ sub options {
 sub option {
     my ($self, $name, $value, $reader) = @_;
 
+    my $server = $self->server;
+
     if (defined $reader) {
         return unless exists $self->{'config'}{$server}{'readers'}{$reader};
 
