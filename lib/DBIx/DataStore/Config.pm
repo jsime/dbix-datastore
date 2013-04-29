@@ -33,6 +33,28 @@ See http://dev.perl.org/licenses/ for more information.
 
 memoize('truthiness');
 
+=head2 new
+
+Constructor for the internal configuration object. Takes an optional hash
+argument with two keys currently supported:
+
+=over 4
+
+=item config
+
+Instead of reading the configuration from a file at one of the pre-defined
+locations, the configuration may be passed in as a hash reference. The structure
+of this hash reference should mirror that of the parsed version of the YAML
+configuration files.
+
+=item store
+
+The name of the datastore to use from the configuration.
+
+=back
+
+=cut
+
 sub new {
     my ($class, %opts) = @_;
 
@@ -48,6 +70,13 @@ sub new {
 
     return $self;
 }
+
+=head2 dsn
+
+Returns the DBI compatible DSN connection string for the currently selected
+datastore. Nothing will be returned if there is no datastore selected.
+
+=cut
 
 sub dsn {
     my ($self, $reader) = @_;
@@ -68,6 +97,29 @@ sub options {
 
     # TODO return list of configuration options set for selected datastore (does not include names of servers or DSN information)
 }
+
+=head2 option
+
+Provides access to retrieve or modify the various settings for the currently
+selected datastore. Accepts one to three arguments.
+
+The first argument should be the name of the setting. If this is the only
+argument provided, the currently configured value of that setting for the
+datastore's primary server, if it exists, will be returned and no other
+action will be taken.
+
+The second argument, if passed, will modify the setting to that value (pending
+any validation that may be necessary for different settings). The value will
+then be returned after it has been modified.
+
+A third argument may also be passed, which if given should be the name of
+one of the datastore's read-only servers. This will cause the setting in
+question to be set/get'ed from the reader's configuration instead of the
+primary's. In cases where you wish to only retrieve the value, and not
+modify it, the second argument may be passed as C<undef> which will
+prevent any changes from being made to the configuration.
+
+=cut
 
 sub option {
     my ($self, $name, $value, $reader) = @_;
