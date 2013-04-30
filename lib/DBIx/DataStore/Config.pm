@@ -92,6 +92,12 @@ sub dsn {
     return sprintf('dbi:%s:%s', $driver, join(';', @parts));
 }
 
+=head2 options
+
+Returns a list of configuration options from currently selected datastore.
+
+=cut
+
 sub options {
     my ($self) = @_;
 
@@ -141,6 +147,17 @@ sub option {
     return;
 }
 
+=head2 server
+
+Returns the name of the currently selected datastore.
+
+Accepts one option argument, which may be used to change the current datastore
+selection. Note that simply calling this with a new datastore name does not
+alter current DBIx::DataStore objects to switch their connections (unless
+explicitly told to reconnect).
+
+=cut
+
 sub server {
     my ($self, $server) = @_;
 
@@ -154,6 +171,13 @@ sub server {
 }
 
 # Internal Subs
+
+=head2 find_config_file
+
+Locates the DBIx::DataStore configuration file by looking in a predetermined
+list of locations.
+
+=cut
 
 sub find_config_file {
     my $home = File::HomeDir->my_home();
