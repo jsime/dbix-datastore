@@ -196,6 +196,20 @@ sub find_config_file {
     return;
 }
 
+=head2 normalize_config
+
+Given a raw structure read from a YAML configuration, this method will return a
+hash reference that has all default values set (for anything the configuration
+did not itself specify) and will also merge global config defaults, as well as
+primary defaults to readers.
+
+The structure returned may be safely (assuming it is not manipulated further)
+used by any methods or functions that expect a valid configuration.
+
+If this method cannot normalize the configuration properly, it will die.
+
+=cut
+
 sub normalize_config {
     my ($orig) = @_;
 
