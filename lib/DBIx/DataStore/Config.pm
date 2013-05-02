@@ -360,6 +360,22 @@ sub normalize_config {
     return \%config;
 }
 
+=head2 pick_datastore
+
+Selects a datastore from the provided configuration. An optional argument
+may be provided which specifies a desired datastore. The method will C<die()>
+if an argument is given containing a datastore name which is not present
+in the configuration.
+
+If no argument is provided, the method will attempt to locate a datastore
+which matches the caller's namespace (and backwards through all
+namespaces above it, until one is found). Failing that, the method will
+look for a datastore set as the default and will use that if found.
+
+If none of those pan out, the method will C<die()>.
+
+=cut
+
 sub pick_datastore {
     my ($self, $name) = @_;
 
