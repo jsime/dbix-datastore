@@ -385,6 +385,12 @@ sub pick_datastore {
     }
 }
 
+=head2 read_config
+
+Loads YAML configuration from file on disk, if present and readable.
+
+=cut
+
 sub read_config {
     my ($path) = @_;
 
@@ -394,6 +400,26 @@ sub read_config {
     return unless defined $yaml && ref($yaml) eq 'HASH';
     return $yaml;
 }
+
+=head2 truthiness
+
+Provides for the use of various true/false synonyms in boolean configuration
+option values. All string variants are case insensitive.
+
+The following values will return 1 for truth: 1, 't', 'true', 'y', 'yes',
+'on', 'enable', 'enabled'.
+
+The following are treated as false: any numeric less than 1, 'f', 'false',
+'n', 'no', 'off', 'disable', 'disabled'.
+
+Any other value results in no return value, which should alternately be
+treated as "option not provided/configured" or and error, as appropriate.
+For the most part, a lack of a return should indicate the use of a default
+value, supplied elsewhere or hardcoded. For values which must be explicitly
+set by the user, treating an empty return is likely better handled as a
+fatal error.
+
+=cut
 
 sub truthiness {
     my ($setting) = @_;
