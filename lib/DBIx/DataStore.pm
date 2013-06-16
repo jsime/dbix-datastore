@@ -330,6 +330,17 @@ sub query_type {
     return $qtype;
 }
 
+sub destination {
+    my ($self) = @_;
+
+    my $dest = 'primary';
+
+    # TODO pick out the destination server for our quer(y|ies), based on configuration
+    # and current transaction status
+
+    return $dest;
+}
+
 =head1 AUTHORS
 
 Jon Sime, C<< <jonsime at gmail.com> >>
