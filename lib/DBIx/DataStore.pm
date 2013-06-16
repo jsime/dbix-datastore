@@ -320,6 +320,16 @@ sub do {
     # instantiation and return of ResultSet
 }
 
+sub query_type {
+    my ($self) = @_;
+
+    my $qtype = 'select';
+
+    # TODO actually figure out the query type
+
+    return $qtype;
+}
+
 =head1 AUTHORS
 
 Jon Sime, C<< <jonsime at gmail.com> >>
